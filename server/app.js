@@ -1,6 +1,9 @@
 const express = require('express')
+const connectDB = require('./db')
 const app = express()
 const port = 5000
+
+connectDB()
 
 const cors = require('cors');
 app.use(cors({ origin: 'http://localhost:3000' }));
@@ -15,5 +18,6 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
+//reflection route
 const userRouter = require('./routes/reflection')
 app.use('/reflection', userRouter)
