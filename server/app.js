@@ -3,7 +3,9 @@ const connectDB = require('./db')
 const app = express()
 const port = 5000
 
-connectDB()
+app.use(express.json());
+
+//connectDB()
 
 const cors = require('cors');
 app.use(cors({ origin: 'http://localhost:3000' }));

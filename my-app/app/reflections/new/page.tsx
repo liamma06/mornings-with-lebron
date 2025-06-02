@@ -22,6 +22,9 @@ export default function NewReflection(){
                 }),
             })
 
+            if (!response.ok) {
+                throw new Error('Failed to submit reflection');
+            }
             router.push('/reflections');
         }catch(err){
             console.error('Error posting reflection:', err);
