@@ -27,4 +27,50 @@ async function LebronResponse(reflection) {
     }
 }
 
-module.exports = {LebronResponse};
+async function emotionRate(reflection){
+     try{
+        const response = await axios.post('https://api.anthropic.com/v1/messages', {
+            model: 'claude-3-sonnet-20240229',
+            max_tokens: 500,
+            messages:[
+                {
+                    role: 'user',
+                    content: `
+                        You are an emotion analysis assistant. Analyze the user's reflection and assign a score from 0 (not present) to 1 (very strongly present) for each of the following emotions:
+
+                        ["happy", "sad", "anxious", "hopeful", "tired", "angry", "calm"]
+
+                        Return a JSON object with the emotion as the key and the score as the value.
+
+                        Reflection:
+                        "${reflection}"
+
+                        Example Output:
+                        {
+                        "happy": 0.2,
+                        "sad": 0.5,
+                        "anxious": 0.8,
+                        "hopeful": 0.6,
+                        "tired": 0.4,
+                        "angry": 0.1,
+                        "calm": 0.7
+                        }
+                    `
+                }
+            ]
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': process.env.ANTHROPIC_API_KEY,
+                'anthropic-version': '2023-06-01'
+            }
+        });
+
+        return response.data.content[0].text;
+    }catch (error) {
+        console.error('Error calling Anthropic API:', error.message);
+        throw new Error('Failed to get response from Anthropic API');
+    }
+}
+
+module.exports = {LebronResponse, emotionRate};

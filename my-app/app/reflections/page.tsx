@@ -25,7 +25,9 @@ export default function ReflectionsPage() {
                 //reflections
                 const response = await fetch('http://localhost:5000/reflection');
                 const data = await response.json();
-                setReflections(data);                //lebron response
+                setReflections(data);       
+                
+                //lebron response
                 const lebronRes = await fetch('http://localhost:5000/reflection/lebron-response');
                 const lebronData = await lebronRes.json();
                 setLebronResponse(lebronData);
@@ -42,7 +44,7 @@ export default function ReflectionsPage() {
     if (loading) {
         return (
         <div className="min-h-screen w-screen bg-yellow-50 py-20 flex items-center justify-center">
-            <div className="text-amber-600 text-xl">Loading LeBron's wisdom...</div>
+            <div className="text-amber-600 text-xl">Loading Lebron's wisdom...</div>
         </div>
         );
     }
