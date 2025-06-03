@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const { LebronResponse } = require('../anthropic')
 
 
 const test = [
@@ -28,6 +29,30 @@ router.post("/new", (req, res) => {
         res.status(201).json(newReflection);
     }catch (error){
         console.error("Error adding reflection:", error);
+    }
+})
+
+router. get("/lebron-response", async(req,res) => {
+    try{
+        if (test.length === 0 ){
+            return res.json({ response: "Start adding messages to get responses from the KING" });
+        }
+
+        const latest = test.reduce((latest, current) => {
+            if (current.id > latest.id) {
+                return current;
+            } else {
+                return latest;
+            }
+        });
+
+        const response = await LebronResponse(latest.text);
+        console.log("Response from Anthropic API:", response);
+
+        res.json({response: response})
+    } catch (error) {
+        console.error("Error getting response from Anthropic API:", error);
+        res.status(500).json({ error: "Failed to get response from Anthropic API" });
     }
 })
 

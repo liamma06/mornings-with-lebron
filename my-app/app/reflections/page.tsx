@@ -2,24 +2,32 @@
 
 import {useEffect, useState} from "react";
 import Link from "next/link";
+import LebronRes from "@/components/lebronRes";
 
 interface Reflection {
     id: number;
     text: string;
 }
+interface LeBronResponse {
+  response: string;
+}
 
 
 export default function ReflectionsPage() {
     const [reflections, setReflections] = useState<Reflection[]>([]);
-    const [newReflection, setNewReflection] = useState('');
+    const [lebronResponse, setLebronResponse] = useState<LeBronResponse | null>(null);
 
     //inital render of relfections 
     useEffect(() => {
         const fetchReflections = async () => {
             try{
+                //reflections
                 const response = await fetch('http://localhost:5000/reflection');
                 const data = await response.json();
-                setReflections(data);
+                setReflections(data);                //lebron response
+                const lebronRes = await fetch('http://localhost:5000/reflection/lebron-response');
+                const lebronData = await lebronRes.json();
+                setLebronResponse(lebronData);
             }
             catch (err){
                 console.error('Error fetching reflections:', err);
@@ -40,6 +48,10 @@ export default function ReflectionsPage() {
                         </span>
                     </Link>
                 </div>
+
+                {lebronResponse && (
+                    <LebronRes response={lebronResponse.response} />
+                )}
 
                 <ul className="space-y-2">
                     {reflections.map(reflection => (
