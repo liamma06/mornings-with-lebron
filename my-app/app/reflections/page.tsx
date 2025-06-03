@@ -15,6 +15,7 @@ interface LeBronResponse {
 
 export default function ReflectionsPage() {
     const [reflections, setReflections] = useState<Reflection[]>([]);
+    const [loading, setLoading] = useState(true);
     const [lebronResponse, setLebronResponse] = useState<LeBronResponse | null>(null);
 
     //inital render of relfections 
@@ -31,11 +32,20 @@ export default function ReflectionsPage() {
             }
             catch (err){
                 console.error('Error fetching reflections:', err);
+            }finally{
+                setLoading(false);
             }
         }
         fetchReflections();
     },[])    
     
+    if (loading) {
+        return (
+        <div className="min-h-screen w-screen bg-yellow-50 py-20 flex items-center justify-center">
+            <div className="text-amber-600 text-xl">Loading LeBron's wisdom...</div>
+        </div>
+        );
+    }
 
     return (
         <div className="min-h-screen w-screen bg-yellow-50 py-12">
