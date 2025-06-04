@@ -15,7 +15,9 @@ const test = [
       "tired": 0.2,
       "angry": 0.0,
       "calm": 0.6
-    }
+    },
+    dominantEmotion: "hopeful",
+    date: "2023-05-30T14:48:00.000Z"
   },
   {
     id: 2, 
@@ -28,7 +30,9 @@ const test = [
       "tired": 0.0,
       "angry": 0.0,
       "calm": 0.8
-    }
+    },
+    dominantEmotion: "calm",
+    date: "2023-05-31T09:22:00.000Z"
   },
   {
     id: 3, 
@@ -41,7 +45,9 @@ const test = [
       "tired": 0.1,
       "angry": 0.0,
       "calm": 0.7
-    }
+    },
+    dominantEmotion: "hopeful",
+    date: "2023-06-01T18:15:00.000Z"
   }
 ];
 
@@ -49,6 +55,7 @@ router.get("/", (req, res) => {
     res.json(test)
 })
 
+//submitting new entry
 router.post("/new", async (req, res) => {
     try{
         const { text } = req.body;
@@ -77,7 +84,7 @@ router.post("/new", async (req, res) => {
             console.log("Error getting emotions:", error);
         }
 
-        //dominante emotion
+        //dominant emotion
         let dominantEmotion = "neutral";
         let highestScore = 0;
 
@@ -87,6 +94,8 @@ router.post("/new", async (req, res) => {
                 dominantEmotion = emotion;
             }
         });
+
+
         const newReflection = {
             id, 
             text, 
@@ -105,6 +114,7 @@ router.post("/new", async (req, res) => {
     }
 })
 
+// get response from lebron
 router.get("/lebron-response", async(req,res) => {
     try{
         if (test.length === 0 ){

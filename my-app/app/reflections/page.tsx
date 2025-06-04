@@ -3,10 +3,16 @@
 import {useEffect, useState} from "react";
 import Link from "next/link";
 import LebronRes from "@/components/lebronRes";
+import EmotionBadge from "@/components/EmotionBadge";
 
 interface Reflection {
     id: number;
     text: string;
+    emotions: {
+        [key: string]: number;
+    };
+    dominantEmotion: string;
+    date: string;
 }
 interface LeBronResponse {
   response: string;
@@ -17,6 +23,19 @@ export default function ReflectionsPage() {
     const [reflections, setReflections] = useState<Reflection[]>([]);
     const [loading, setLoading] = useState(true);
     const [lebronResponse, setLebronResponse] = useState<LeBronResponse | null>(null);
+
+    
+    // Format date 
+    const formatDate = (dateString: string) => {
+        const options: Intl.DateTimeFormatOptions = { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric',
+            hour: 'numeric', 
+            minute: 'numeric'
+        };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
 
     //inital render of relfections 
     useEffect(() => {
@@ -65,10 +84,20 @@ export default function ReflectionsPage() {
                     <LebronRes response={lebronResponse.response} />
                 )}
 
-                <ul className="space-y-2">
+                {/* All reflections with date and emotion */}
+                <h2 className="text-xl font-semibold mb-4">Your Reflection Journal</h2>
+                <ul className="space-y-4">
                     {reflections.map(reflection => (
-                        <li key={reflection.id} className="p-3 bg-amber-50 rounded">
-                            {reflection.text}
+                        <li key={reflection.id} className="p-4 bg-amber-50 rounded-lg">
+                            <div className="flex items-start justify-between mb-2">
+                                <div className="text-sm text-gray-500">
+                                    {reflection.date ? formatDate(reflection.date) : "No date"}
+                                </div>
+                                {reflection.dominantEmotion && (
+                                    <EmotionBadge emotion={reflection.dominantEmotion} />
+                                )}
+                            </div>
+                            <p className="text-gray-800">{reflection.text}</p>
                         </li>
                     ))}
                 </ul>
