@@ -27,7 +27,7 @@ async function LebronResponse(reflection) {
     }
 }
 
-async function emotionRate(reflection){
+async function EmotionRate(reflection){
      try{
         const response = await axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-3-sonnet-20240229',
@@ -66,11 +66,32 @@ async function emotionRate(reflection){
             }
         });
 
-        return response.data.content[0].text;
+        const responseText =  response.data.content[0].text;
+
+        //turn text response to json
+        try {
+            const jsonMatch = responseText.match(/{[\s\S]*}/);
+            if (jsonMatch) {
+                return JSON.parse(jsonMatch[0]);
+            }
+            throw new Error("Could not find JSON in the response");
+        } catch (parseError) {
+            console.error("Error parsing emotion analysis JSON:", parseError);
+            return {
+                "happy": 0,
+                "sad": 0,
+                "anxious": 0,
+                "hopeful": 0,
+                "tired": 0, 
+                "angry": 0,
+                "calm": 0
+            };
+        }
+
     }catch (error) {
         console.error('Error calling Anthropic API:', error.message);
         throw new Error('Failed to get response from Anthropic API');
     }
 }
 
-module.exports = {LebronResponse, emotionRate};
+module.exports = {LebronResponse, EmotionRate};

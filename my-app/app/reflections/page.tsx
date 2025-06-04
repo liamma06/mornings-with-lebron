@@ -69,7 +69,7 @@ export default function ReflectionsPage() {
     }
 
     return (
-        <div className="min-h-screen w-screen bg-yellow-50 py-12">
+        <div className="min-h-screen w-full bg-yellow-50 py-12">
             <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Reflections</h1>
@@ -91,7 +91,7 @@ export default function ReflectionsPage() {
                         <li key={reflection.id} className="p-4 bg-amber-50 rounded-lg">
                             <div className="flex items-start justify-between mb-2">
                                 <div className="text-sm text-gray-500">
-                                    {reflection.date ? formatDate(reflection.date) : "No date"}
+                                    {reflection.date && formatDate(reflection.date) }
                                 </div>
                                 {reflection.dominantEmotion && (
                                     <EmotionBadge emotion={reflection.dominantEmotion} />

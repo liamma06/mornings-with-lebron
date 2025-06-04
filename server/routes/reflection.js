@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { LebronResponse,  } = require('../anthropic')
+const { LebronResponse, EmotionRate  } = require('../anthropic')
 
 //test data
 const test = [
@@ -52,7 +52,11 @@ const test = [
 ];
 
 router.get("/", (req, res) => {
-    res.json(test)
+    // Sort by date newest
+    const sortedReflections = [...test].sort((a, b) => {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+    res.json(sortedReflections);
 })
 
 //submitting new entry
@@ -80,6 +84,7 @@ router.post("/new", async (req, res) => {
         //get emotions 
         try{
             emotions = await EmotionRate(text);
+            console.log("Emotion analysis results:", emotions);
         }catch (error) {
             console.log("Error getting emotions:", error);
         }
@@ -95,7 +100,6 @@ router.post("/new", async (req, res) => {
             }
         });
 
-
         const newReflection = {
             id, 
             text, 
@@ -104,7 +108,6 @@ router.post("/new", async (req, res) => {
             date: new Date().toISOString() 
         };
 
-        console.log("newReflection", newReflection);
 
         test.push(newReflection);
         res.status(201).json(newReflection);
