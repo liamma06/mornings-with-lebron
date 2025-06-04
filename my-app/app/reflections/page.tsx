@@ -84,6 +84,22 @@ export default function ReflectionsPage() {
                     <LebronRes response={lebronResponse.response} />
                 )}
 
+                {/* Styled Charts Link - Simple Version */}
+                <div className="my-6">
+                    <Link 
+                        href="/reflections/charts" 
+                        className="flex items-center justify-center w-full py-3 px-4 bg-amber-100 text-amber-800 border border-amber-200 rounded-lg hover:bg-amber-200 transition-all shadow-sm hover:shadow group"
+                    >
+                        <span className="mr-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </span>
+                        <span className="font-medium">View Emotional Insights</span>
+                        <span className="ml-1 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">→</span>
+                    </Link>
+                </div>
+
                 {/* All reflections with date and emotion */}
                 <h2 className="text-xl font-semibold mb-4">Your Reflection Journal</h2>
                 <ul className="space-y-4">
