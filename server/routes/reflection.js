@@ -1,74 +1,75 @@
-const express = require('express')
+import express from 'express';
+import Reflection from '../models/Reflection.js';
+import User from '../models/User.js';
+import { EmotionRate, LebronResponse } from '../anthropic.js';
+import { getUserFromToken } from '../middleware/auth0.js';
+
 const router = express.Router()
-const { LebronResponse, EmotionRate  } = require('../anthropic')
 
-//test data
-const test = [
-  {
-    id: 1, 
-    text: "this is a test reflection1",
-    emotions: {
-      "happy": 0.2,
-      "sad": 0.1,
-      "anxious": 0.0,
-      "hopeful": 0.7,
-      "tired": 0.2,
-      "angry": 0.0,
-      "calm": 0.6
-    },
-    dominantEmotion: "hopeful",
-    date: "2023-05-30T14:48:00.000Z"
-  },
-  {
-    id: 2, 
-    text: "this is a test reflection2",
-    emotions: {
-      "happy": 0.3,
-      "sad": 0.0,
-      "anxious": 0.1,
-      "hopeful": 0.6,
-      "tired": 0.0,
-      "angry": 0.0,
-      "calm": 0.8
-    },
-    dominantEmotion: "calm",
-    date: "2023-05-31T09:22:00.000Z"
-  },
-  {
-    id: 3, 
-    text: "this is a test reflection3",
-    emotions: {
-      "happy": 0.5,
-      "sad": 0.0,
-      "anxious": 0.0,
-      "hopeful": 0.8,
-      "tired": 0.1,
-      "angry": 0.0,
-      "calm": 0.7
-    },
-    dominantEmotion: "hopeful",
-    date: "2023-06-01T18:15:00.000Z"
-  }
-];
+//function to actually get/add user into data after authentication
+const getOrCreateuser = async (userInfo)=>{
+    if(!userInfo || userInfo.auth0Id ){
+        throw new Error("User information is missing or invalid");
+    }
 
-router.get("/", (req, res) => {
-    // Sort by date newest
-    const sortedReflections = [...test].sort((a, b) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-    });
-    res.json(sortedReflections);
+    let user = await User.findOne({ auth0Id: userInfo.auth0Id });
+
+    // If user does not exist, create a new user
+    if(!user){
+        user = new User({
+            auth0Id: userInfo.auth0Id,
+            email: userInfo.email,
+            name: userInfo.name,
+            lastLogin: new Date()
+        });
+        await user.save();
+    }else{
+        user.lastLogin = new Date();
+        if (userInfo.name && !user.name) {
+            user.email = userInfo.email;
+        }
+        if (userInfo.email && !user.email) {
+            user.email = userInfo.email;
+        }
+        await user.save();
+    }
+    return user;
+}
+
+
+
+router.get("/", async (req, res) => {
+    try{
+        //user info
+        const userInfo = getUserFromToken(req);
+        if (!userInfo) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const user = await getOrCreateuser(userInfo);
+
+        //fetch all relfection from user newest to oldest
+        const reflections = await Reflection.find({ userId: user._id }).sort({ createdAt: -1 });
+        res.json(reflections);
+    }catch (error){
+        console.error("Error fetching reflections:", error);
+        res.status(500).json({ error: "Failed to fetch reflections" });
+    }
 })
 
 //submitting new entry
 router.post("/new", async (req, res) => {
     try{
+        //user info
+        const userInfo = getUserFromToken(req);
+        if (!userInfo) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const user = await getOrCreateuser(userInfo);
+
         const { text } = req.body;
         if (!text) {
             return res.status(400).json({ error: "Text is required" });
         }
-
-        const id = test.length > 0 ? 
-            Math.max(...test.map(item => item.id)) + 1 : 1;
 
         // Analyze emotions
         let emotions = {
@@ -84,7 +85,6 @@ router.post("/new", async (req, res) => {
         //get emotions 
         try{
             emotions = await EmotionRate(text);
-            console.log("Emotion analysis results:", emotions);
         }catch (error) {
             console.log("Error getting emotions:", error);
         }
@@ -100,16 +100,14 @@ router.post("/new", async (req, res) => {
             }
         });
 
-        const newReflection = {
-            id, 
-            text, 
+        const newReflection = new Relection( {
+            text,
             emotions,
-            dominantEmotion, 
-            date: new Date().toISOString() 
-        };
+            dominantEmotion,
+            userId: user._id
+        });
+        await newReflection.save();
 
-
-        test.push(newReflection);
         res.status(201).json(newReflection);
     }catch (error){
         console.error("Error adding reflection:", error);
@@ -120,25 +118,27 @@ router.post("/new", async (req, res) => {
 // get response from lebron
 router.get("/lebron-response", async(req,res) => {
     try{
-        if (test.length === 0 ){
-            return res.json({ response: "Start adding messages to get responses from the KING" });
+        //user info
+        const userInfo = getUserFromToken(req);
+        if (!userInfo) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const user = await getOrCreateuser(userInfo);
+
+        //latest relfection -> ai api
+        const latestReflection = await Reflection.findOne({ userId: user._id }).sort({ createdAt: -1 });
+
+        if (!latestReflection) {
+            return res.json({response : "Start adding relections to get responses from the KING"});
         }
 
-        const latest = test.reduce((latest, current) => {
-            if (current.id > latest.id) {
-                return current;
-            } else {
-                return latest;
-            }
-        });
+        const response = await LebronResponse(latestReflection.text);
 
-        const response = await LebronResponse(latest.text);
-
-        res.json({response: response})
+        res.json({response})
     } catch (error) {
         console.error("Error getting response from Anthropic API:", error);
         res.status(500).json({ error: "Failed to get response from Anthropic API" });
     }
 })
 
-module.exports = router
+export default router
