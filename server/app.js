@@ -1,26 +1,28 @@
-const express = require('express')
-const connectDB = require('./db')
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './db.js';
+import reflectionRoutes from './routes/reflection.js';
+import { checkJwt } from './middleware/auth0.js';
+
+dotenv.config();
+
 const app = express()
 const port = 5000
 
+connectDB()
+
+
 app.use(express.json());
-
-//connectDB()
-
-const cors = require('cors');
-app.use(cors({ origin: 'http://localhost:3000' }));
-
-
+app.use(cors())
 
 app.get('/', (req, res) => {
-  console.log("hellow world")
-  res.send("Hello world")
+  res.send('Mornings with LeBron API is running');
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-//reflection route
-const userRouter = require('./routes/reflection')
-app.use('/reflection', userRouter)
+//reflection route has to be autheticated first
+app.use('/api/reflection', checkJwt, reflectionRoutes);
