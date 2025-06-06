@@ -1,7 +1,7 @@
 const express = require('express')
 const connectDB = require('./db')
 const app = express()
-const port = 5000
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
@@ -17,9 +17,9 @@ app.get('/', (req, res) => {
   res.send("Hello world")
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Example app listening on port ${PORT}`)
+});
 
 //reflection route
 const userRouter = require('./routes/reflection')
