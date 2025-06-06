@@ -8,7 +8,14 @@ app.use(express.json());
 //connectDB()
 
 const cors = require('cors');
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001', 
+    'https://your-vercel-app.vercel.app' // Add your Vercel URL here
+  ],
+  credentials: true
+}));
 
 
 
