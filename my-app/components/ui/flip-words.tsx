@@ -1,10 +1,12 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, LayoutGroup } from "motion/react";
+import { cn } from "@/lib/utils";
 
 export const FlipWords = ({
   words,
   duration = 3000,
+  className,
 }: {
   words: string[];
   duration?: number;
@@ -55,7 +57,10 @@ export const FlipWords = ({
           scale: 2,
           position: "absolute",
         }}
-        className="z-10 inline-block relative text-left px-2"
+        className={cn(
+          "z-10 inline-block relative text-left px-2",
+          className
+        )}
         key={currentWord}
       >
         {/* edit suggested by Sajal: https://x.com/DewanganSajal */}
