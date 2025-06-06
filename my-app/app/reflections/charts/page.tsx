@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import Link from 'next/link';
+import { API_BASE_URL } from '../../../lib/config';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -93,7 +94,13 @@ export default function ReflectionsChartsPage() {
 
   const fetchReflections = async () => {
     try {
-      const response = await fetch('http://localhost:5000/reflection');
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/reflection`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setReflections(data);

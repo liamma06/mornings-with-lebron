@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import Link from "next/link";
 import LebronRes from "@/components/lebronRes";
 import EmotionBadge from "@/components/EmotionBadge";
+import { API_BASE_URL } from '../../lib/config' 
 
 interface Reflection {
     id: number;
@@ -42,12 +43,22 @@ export default function ReflectionsPage() {
         const fetchReflections = async () => {
             try{
                 //reflections
-                const response = await fetch('http://localhost:5000/reflection');
+                const response = await fetch(`${API_BASE_URL}/reflection`, { 
+                    method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    }
+                  });
                 const data = await response.json();
                 setReflections(data);       
                 
                 //lebron response
-                const lebronRes = await fetch('http://localhost:5000/reflection/lebron-response');
+                const lebronRes = await fetch(`${API_BASE_URL}/reflection/lebron-response`, { 
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
                 const lebronData = await lebronRes.json();
                 setLebronResponse(lebronData);
             }

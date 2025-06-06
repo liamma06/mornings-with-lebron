@@ -3,7 +3,7 @@
 import { useState} from "react"
 import {useRouter} from "next/navigation";
 import Link from "next/link";
-
+import { API_BASE_URL } from '../../../lib/config' // Add this import
 
 export default function NewReflection(){
     const [newReflection, setNewReflection] = useState('');
@@ -12,9 +12,11 @@ export default function NewReflection(){
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!newReflection.trim()) return
+
         setIsSubmitting(true);
         try{
-            const response = await fetch('http://localhost:5000/reflection/new',{
+            const response = await fetch(`${API_BASE_URL}/reflection/new`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
