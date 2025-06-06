@@ -12,6 +12,7 @@ app.use(cors({
     'http://localhost:3001', 
     'https://mornings-with-lebron.vercel.app',
     'https://mornings-with-lebron-jcj6zgm96-liamma06s-projects.vercel.app',
+    'https://mornings-with-lebron-6r14eckzd-liamma06s-projects.vercel.app',
     'https://*.vercel.app'
   ],
   credentials: true,
