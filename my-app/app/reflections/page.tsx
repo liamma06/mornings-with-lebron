@@ -63,7 +63,7 @@ export default function ReflectionsPage() {
     if (loading) {
         return (
         <div className="min-h-screen w-screen bg-yellow-50 py-20 flex items-center justify-center">
-            <div className="text-amber-600 text-xl">Loading Lebron's wisdom...</div>
+            <div className="text-amber-600 text-xl">Loading Lebron&apos;s wisdom...</div>
         </div>
         );
     }
@@ -102,21 +102,25 @@ export default function ReflectionsPage() {
 
                 {/* All reflections with date and emotion */}
                 <h2 className="text-xl font-semibold mb-4">Your Reflection Journal</h2>
-                <ul className="space-y-4">
-                    {reflections.map(reflection => (
-                        <li key={reflection.id} className="p-4 bg-amber-50 rounded-lg">
-                            <div className="flex items-start justify-between mb-2">
-                                <div className="text-sm text-gray-500">
-                                    {reflection.date && formatDate(reflection.date) }
+                {reflections.length === 0 ? (
+                    <p className="text-gray-600 mb-8">You haven&apos;t added any reflections yet. Start your journey!</p>
+                ) : (
+                    <ul className="space-y-4">
+                        {reflections.map(reflection => (
+                            <li key={reflection.id} className="p-4 bg-amber-50 rounded-lg">
+                                <div className="flex items-start justify-between mb-2">
+                                    <div className="text-sm text-gray-500">
+                                        {reflection.date && formatDate(reflection.date) }
+                                    </div>
+                                    {reflection.dominantEmotion && (
+                                        <EmotionBadge emotion={reflection.dominantEmotion} />
+                                    )}
                                 </div>
-                                {reflection.dominantEmotion && (
-                                    <EmotionBadge emotion={reflection.dominantEmotion} />
-                                )}
-                            </div>
-                            <p className="text-gray-800">{reflection.text}</p>
-                        </li>
-                    ))}
-                </ul>
+                                <p className="text-gray-800">{reflection.text}</p>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             {/* Back to Home Button */}
