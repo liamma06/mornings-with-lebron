@@ -118,6 +118,11 @@ export default function ReflectionsPage() {
                     ))}
                 </ul>
             </div>
+
+            {/* Back to Home Button */}
+            <Link href="/" className="fixed bottom-6 right-6 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full shadow-lg transition-colors z-50">
+                ← Home
+            </Link>
         </div>
     );
 }
