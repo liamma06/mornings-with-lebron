@@ -3,6 +3,12 @@ require('dotenv').config();
 
 async function LebronResponse(reflection) {
     try{
+        // Clean the API key to remove any potential whitespace or invisible characters
+        const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
+        if (!apiKey) {
+            throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+        }
+
         const response = await axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-3-sonnet-20240229',
             max_tokens: 500,
@@ -15,20 +21,31 @@ async function LebronResponse(reflection) {
         }, {
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': process.env.ANTHROPIC_API_KEY,
+                'x-api-key': apiKey,
                 'anthropic-version': '2023-06-01'
             }
-        });
-
-        return response.data.content[0].text;
+        });return response.data.content[0].text;
     }catch (error) {
-        console.error('Error calling Anthropic API:', error.message);
+        console.error('Error calling Anthropic API for LeBron response:');
+        console.error('Error message:', error.message);
+        if (error.response) {
+            console.error('Response status:', error.response.status);
+            console.error('Response data:', error.response.data);
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        }
         throw new Error('Failed to get response from Anthropic API');
     }
 }
 
 async function EmotionRate(reflection){
      try{
+        // Clean the API key to remove any potential whitespace or invisible characters
+        const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
+        if (!apiKey) {
+            throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+        }
+
         const response = await axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-3-sonnet-20240229',
             max_tokens: 500,
@@ -61,7 +78,7 @@ async function EmotionRate(reflection){
         }, {
             headers: {
                 'Content-Type': 'application/json',
-                'x-api-key': process.env.ANTHROPIC_API_KEY,
+                'x-api-key': apiKey,
                 'anthropic-version': '2023-06-01'
             }
         });
@@ -85,12 +102,27 @@ async function EmotionRate(reflection){
                 "tired": 0, 
                 "angry": 0,
                 "calm": 0
-            };
-        }
+            };        }
 
     }catch (error) {
-        console.error('Error calling Anthropic API:', error.message);
-        throw new Error('Failed to get response from Anthropic API');
+        console.error('Error calling Anthropic API for emotion analysis:');
+        console.error('Error message:', error.message);
+        if (error.response) {
+            console.error('Response status:', error.response.status);
+            console.error('Response data:', error.response.data);
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        }
+        // Return default emotions instead of throwing error to prevent blocking
+        return {
+            "happy": 0,
+            "sad": 0,
+            "anxious": 0,
+            "hopeful": 0,
+            "tired": 0, 
+            "angry": 0,
+            "calm": 0
+        };
     }
 }
 
