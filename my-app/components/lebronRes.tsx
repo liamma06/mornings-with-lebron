@@ -19,7 +19,7 @@ export default function LebronRes(props:LebronResProps){
                 />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-amber-800">LeBron's Take</h3>
+                <h3 className="text-xl font-bold text-amber-800">LeBron&apos;s Advice</h3>
                 <p className="text-neutral-700 italic mt-2">{props.response}</p>
               </div>
             </div>

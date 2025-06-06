@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 export const FlipWords = ({
   words,
   duration = 3000,
-  className,
 }: {
   words: string[];
   duration?: number;
