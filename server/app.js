@@ -10,9 +10,13 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:3001', 
-    'https://mornings-with-lebron.vercel.app/'
+    'https://mornings-with-lebron.vercel.app',
+    'https://mornings-with-lebron-jcj6zgm96-liamma06s-projects.vercel.app',
+    'https://*.vercel.app'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.get('/', (req, res) => {
