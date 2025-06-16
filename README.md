@@ -1,9 +1,6 @@
 # Mornings With LeBron 🏀
 
-> A motivational micro-site that reminds you: "Every morning you wake up, LeBron is working."
-
-## 📸 Preview
-![Screenshot](public/lebron.png)
+> 
 
 ## ✨ Features
 - Minimalist Next.js design
